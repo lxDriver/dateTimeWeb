@@ -19,5 +19,18 @@ angular.module('dateTime.dashboard', ['ngRoute', 'firebase'])
  
 // Home controller
 .controller('DashboardCtrl', ['$scope','$location', '$firebaseAuth', function($scope,$location,$firebaseAuth) {
+    /*  
+    *   Dashboard Controller Function
+    */
+    
+    /* Variables */
+    
+    // firebase
+    var firebasePath = "https://lxdatetime.firebaseio.com/";
+    var firebasePathUsers = firebasePath + "users/";
+    
+    var firebaseObj = new Firebase(firebasePath);
+    
+    /* Functions */
     
 }]);

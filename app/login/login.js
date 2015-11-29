@@ -19,13 +19,22 @@ angular.module('dateTime.login', ['ngRoute', 'firebase'])
  
 // Home controller
 .controller('LoginCtrl', ['$scope','$location', '$firebaseAuth', function($scope,$location,$firebaseAuth) {
+    /*  
+    *   Login Controller Function
+    */
+    
+    /* Variables */
     var firebasePath = "https://lxdatetime.firebaseio.com/";
+    var firebasePathUsers = firebasePath + "users/";
+    
     var firebaseObj = new Firebase(firebasePath); 
-
+    
     var loginObj = $firebaseAuth(firebaseObj);
 
     $scope.user = {};
-
+    
+    
+    /* Functions */
     $scope.SignIn = function(event) {
         event.preventDefault();  // To prevent form refresh
 
@@ -48,7 +57,6 @@ angular.module('dateTime.login', ['ngRoute', 'firebase'])
             });
     }
 
-
     // find a suitable name based on the meta info given by each provider
     var getName = function(authData) {
       switch(authData.provider) {
@@ -61,11 +69,9 @@ angular.module('dateTime.login', ['ngRoute', 'firebase'])
       }
     }
 
-    var firebaseUsers = firebasePath + "users/";
-
-        // Tests to see if /users/<userId> has any data. 
+    // Tests to see if /users/<userId> has any data. 
     var checkIfUserExists = function(userId) {
-        var usersRef = new Firebase(firebaseUsers);
+        var usersRef = new Firebase(firebasePathUsers);
         usersRef.child(userId).once('value', function(snapshot) {
             var exists = (snapshot.val() !== null);
             
@@ -77,21 +83,23 @@ angular.module('dateTime.login', ['ngRoute', 'firebase'])
             return exists;
         });
     }
-
+    
+    // function that gets called when some authenticates
     firebaseObj.onAuth(function(authData) {
-        var isUser = checkIfUserExists(authData.uid);
-        console.log("onAuth");
-        if (authData && !isUser) {
-            // save the user's profile into the database so we can list users,
-            // use them in Security and Firebase Rules, and show profiles
-            firebaseObj.child("users").child(authData.uid).set({
-              provider: authData.provider,
-              name: getName(authData)
-            });
-        } 
-        if (authData) {
-            console.log("existing user forwarded");
-            $location.path('/dashboard');
+        if(authData) {
+            var isUser = checkIfUserExists(authData.uid);
+            console.log("onAuth");
+            if (authData && !isUser) {
+                // save the user's profile into the database so we can list users,
+                // use them in Security and Firebase Rules, and show profiles
+                firebaseObj.child("users").child(authData.uid).set({
+                  provider: authData.provider,
+                  name: getName(authData)
+                });
+            } else {
+                console.log("existing user forwarded");
+                $location.path('/dashboard');
+            }
         }
     });
     
