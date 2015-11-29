@@ -1,0 +1,10 @@
+<div class= "container" ng-controller="TimeCtrl as time">
+    
+    <h2>Start: {{time.start | date:"dd.mm HH:mm:ss"}}</h2>
+    <h2>Ende: {{time.stop | date:"dd.mm HH:mm:ss"}}</h2>
+    
+    <button class="btn btn-success" ng-click="time.setStart()">Start</button>
+    <button class="btn btn-danger" ng-click="time.setStop()">Stop</button>
+    
+    <p>Difference: {{time.difference() | date:"mm:ss"}} min</p>
+</div>
