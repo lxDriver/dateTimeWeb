@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dateTime">
+ 
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+ 
+    <title>dateTime - Login</title>
+ 
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://getbootstrap.com/examples/signin/signin.css" rel="stylesheet">
+</head>
+ 
+<body ng-controller="LoginCtrl">
+ 
+    <div class="container">
+        <div class="jumbotron" style="padding-bottom:0px;text-align:center;">
+            <h2>dateTime</h2>
+        </div>
+        <form class="form-signin" role="form">
+            <div class="form-group" ng-class="{ 'has-error' : signinForm.email.$invalid }">
+                <label>User</label>
+                <input ng-model="user.email" class="form-control" placeholder="user" required="" autofocus="">
+                <p class="help-block" ng-show="signinForm.email.$invalid">Enter a valid email.</p>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error' : signinForm.password.$invalid }">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" ng-model="user.password" ng-minlength="3" placeholder="password">
+                <p class="help-block" ng-show="signinForm.password.$error.minlength">Min password length is 8 characters.</p>
+            </div>
+            <button ng-disabled="!user.email || !user.password" type="button" ng-click="SignIn($event)" class="btn btn-lg btn-primary btn-block">SignIn</button>
+      </form>
+ 
+    </div>
+    
+</body>
+
+</html>
