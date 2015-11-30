@@ -10,17 +10,19 @@
 // Declare app level module which depends on views, and components
 angular.module('dateTime', [
     'ui.router',
+    'ngRoute',
     'ngAnimate'
 ]).config(function($stateProvider, $urlRouterProvider) {
 
+    console.log("config");
     $urlRouterProvider.when('/dashboard', '/dashboard/overview');
     $urlRouterProvider.otherwise('/login');
 
     $stateProvider
       .state('base', {
         abstract: true,
-        url: '',
-        templateUrl: 'views/base.html'
+        url: '/',
+        templateUrl: '/views/base.html'
       })
         .state('login', {
           url: '/login',

@@ -25,7 +25,6 @@ angular.module('dateTime', ['firebase'])
 
     $scope.user = {};
     
-    
     /* Functions */
     $scope.SignIn = function(event) {
         event.preventDefault();  // To prevent form refresh

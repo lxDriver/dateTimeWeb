@@ -1,7 +1,12 @@
 /* jshint node:true */
 'use strict';
 
-var gulp = require('gulp');
+var gulp = require('gulp'),
+    webserver = require('gulp-webserver'),
+    connect = require('gulp-connect'),
+    watch = require('gulp-watch'),
+    serve = require('gulp-serve');
+
 var argv = require('yargs').argv;
 var $ = require('gulp-load-plugins')();
 
@@ -72,33 +77,18 @@ gulp.task('extras', function() {
   }).pipe(gulp.dest('dist'));
 });
 
-gulp.task('clean', require('del').bind(null, ['.tmp', 'dist']));
+gulp.task('clean', require('del').bind(null, ['dist']));
 
-gulp.task('connect', ['styles'], function() {
-  var serveStatic = require('serve-static');
-  var serveIndex = require('serve-index');
-  var app = require('connect')()
-    .use(require('connect-livereload')({port: 35729}))
-    .use(serveStatic('.tmp'))
-    .use(serveStatic('app'))
-    // paths to bower_components should be relative to the current file
-    // e.g. in app/index.html you should use ../bower_components
-    .use('/bower_components', serveStatic('bower_components'))
-    .use(serveIndex('app'));
-
-  require('http').createServer(app)
-    .listen(9000)
-    .on('listening', function() {
-      console.log('Started connect web server on http://localhost:9000');
+gulp.task('webserver', ['wiredep', 'fonts', 'watch'], function() {
+    connect.server({
+        root: ['app'],
+        livereload: true,
+        port: 8000,
+        middleware: function(connect) {
+            return [connect().use('/bower_components', connect.static('bower_components')).use(connect.static('.tmp')).use(connect.static('app'))];
+        }
     });
 });
-
-gulp.task('serve', ['wiredep', 'connect', 'fonts', 'watch'], function() {
-  if (argv.open) {
-    require('opn')('http://localhost:9000');
-  }
-});
-
 // inject bower components
 gulp.task('wiredep', function() {
   var wiredep = require('wiredep').stream;
@@ -123,9 +113,7 @@ gulp.task('wiredep', function() {
     .pipe(gulp.dest('test'));
 });
 
-gulp.task('watch', ['connect'], function() {
-  $.livereload.listen();
-
+gulp.task('watch', function() {
   // watch for changes
   gulp.watch([
     'app/**/*.html',
@@ -138,12 +126,11 @@ gulp.task('watch', ['connect'], function() {
   gulp.watch('bower.json', ['wiredep']);
 });
 
-gulp.task('builddist', ['jshint', 'jscs', 'html', 'images', 'fonts', 'extras'],
-  function() {
+gulp.task('builddist', ['jshint', 'jscs', 'html', 'images', 'fonts', 'extras'], function() {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
-gulp.task('build', ['clean'], function() {
+gulp.task('build', function() {
   gulp.start('builddist');
 });
 
@@ -152,3 +139,5 @@ gulp.task('docs', [], function() {
     .pipe($.ngdocs.process())
     .pipe(gulp.dest('./docs'));
 });
+
+gulp.task('default',['webserver', 'watch']);
